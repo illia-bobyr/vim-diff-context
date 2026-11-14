@@ -1,0 +1,114 @@
+*diff-context.txt*  Adjust the diff context with hotkeys.
+
+Author:  Illia Bobyr
+License: MIT, see LICENSE.
+
+==============================================================================
+CONTENTS                                               *diff-context-contents*
+
+  1. Introduction ............................ |diff-context-introduction|
+  2. Mappings ................................ |diff-context-mappings|
+  3. Commands ................................ |diff-context-commands|
+  4. Options ................................. |diff-context-options|
+  5. Functions ............................... |diff-context-functions|
+
+==============================================================================
+1. INTRODUCTION                                    *diff-context-introduction*
+
+In diff mode Vim folds away unchanged lines, keeping only a few lines of
+context around each change.  The amount is set by the "context:" item of
+'diffopt' (6 lines when the item is absent).  This plugin lets you grow and
+shrink that context with a keystroke, without retyping 'diffopt'.
+
+Only the "context:" item is touched; the other 'diffopt' items are kept.
+
+==============================================================================
+2. MAPPINGS                                            *diff-context-mappings*
+
+Default key bindings, all in Normal mode:
+
+  <Leader>d+   Increase the context by [count] steps.
+  <Leader>d-   Decrease the context by [count] steps (never below 0).
+  <Leader>d=   Reset the context to |g:diff_context_default|.
+
+A default binding is only created when its key is not already mapped, and
+when you have not already mapped the corresponding <Plug> mapping to some key
+yourself.  So existing mappings are never overwritten.
+
+To use other keys, either set the |diff-context-options| below, or map the
+<Plug> mappings directly:
+>
+        nmap <Leader>c+ <Plug>(diff-context-increase)
+        nmap <Leader>c- <Plug>(diff-context-decrease)
+        nmap <Leader>c= <Plug>(diff-context-reset)
+<
+                                               *<Plug>(diff-context-increase)*
+<Plug>(diff-context-increase)
+        Increase the context by [count] times |g:diff_context_step| lines.
+
+                                               *<Plug>(diff-context-decrease)*
+<Plug>(diff-context-decrease)
+        Decrease the context by [count] times |g:diff_context_step| lines.
+
+                                                  *<Plug>(diff-context-reset)*
+<Plug>(diff-context-reset)
+        Set the context to |g:diff_context_default| lines.
+
+==============================================================================
+3. COMMANDS                                            *diff-context-commands*
+
+                                                                *:DiffContext*
+:DiffContext            Show the current diff context.
+:DiffContext {N}        Set the diff context to {N} lines.
+:DiffContext +{N}       Increase the diff context by {N} lines.
+:DiffContext -{N}       Decrease the diff context by {N} lines.
+
+==============================================================================
+4. OPTIONS                                              *diff-context-options*
+
+Set these in your |vimrc|, before the plugin is loaded.
+
+                                                  *g:diff_context_increase_map*
+g:diff_context_increase_map     (default: "<Leader>d+")
+        Key for |<Plug>(diff-context-increase)|.  Empty string: no binding.
+
+                                                  *g:diff_context_decrease_map*
+g:diff_context_decrease_map     (default: "<Leader>d-")
+        Key for |<Plug>(diff-context-decrease)|.  Empty string: no binding.
+
+                                                     *g:diff_context_reset_map*
+g:diff_context_reset_map        (default: "<Leader>d=")
+        Key for |<Plug>(diff-context-reset)|.  Empty string: no binding.
+
+                                                   *g:diff_context_no_mappings*
+g:diff_context_no_mappings      (default: 0)
+        When 1, no default key bindings are created.  The global
+        |g:no_plugin_maps| has the same effect.
+
+                                                         *g:diff_context_step*
+g:diff_context_step             (default: 1)
+        Number of lines a single increase or decrease changes the context by.
+
+                                                      *g:diff_context_default*
+g:diff_context_default          (default: 6)
+        Context assumed when 'diffopt' has no "context:" item, and the value
+        |<Plug>(diff-context-reset)| sets.  6 matches Vim's own default.
+
+                                                        *g:diff_context_quiet*
+g:diff_context_quiet            (default: 0)
+        When 1, the new context is not echoed after a change.
+
+==============================================================================
+5. FUNCTIONS                                          *diff-context-functions*
+
+diff_context#get()                                        *diff_context#get()*
+        Return the current diff context, in lines.
+
+diff_context#set({lines})                                 *diff_context#set()*
+        Set the diff context to {lines}, clamped at 0.  Returns the new value.
+
+diff_context#adjust({delta})                           *diff_context#adjust()*
+        Change the diff context by {delta} lines.  Returns the new value.
+
+==============================================================================
+ vim:tw=78:ts=8:noet:ft=help:norl:
